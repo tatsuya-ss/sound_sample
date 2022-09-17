@@ -45,12 +45,8 @@ class MusicService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val context = applicationContext
-
         val channelId = "default"
-
         val title = "アプリタイトル"
-
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val pendingIntent = Intent(this, MainActivity::class.java).let { notificationIntent ->
             PendingIntent.getActivity(
@@ -61,12 +57,6 @@ class MusicService : Service() {
             )
         }
 
-        val channel = NotificationChannel(
-            "default", title, NotificationManager.IMPORTANCE_DEFAULT
-        )
-
-        notificationManager.createNotificationChannel(channel)
-
         val notification = Notification.Builder(context, channelId)
             .setContentTitle(title) // android標準アイコンから
             .setSmallIcon(android.R.drawable.ic_media_play)
@@ -76,7 +66,7 @@ class MusicService : Service() {
             .setWhen(System.currentTimeMillis())
             .build()
 
-        startForeground(1, notification)
+        startForeground(ONGOING_NOTIFICATION_ID, notification)
 
         mediaPlayer = MediaPlayer.create(this, R.raw.shining_star)
         mediaPlayer?.start()
@@ -103,6 +93,10 @@ class MusicService : Service() {
         mediaPlayer?.reset()
         // リソースの解放
         mediaPlayer?.release()
+    }
+
+    companion object {
+        private const val ONGOING_NOTIFICATION_ID = 1
     }
 }
 
